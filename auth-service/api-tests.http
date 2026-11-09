@@ -1,0 +1,49 @@
+### 1. Register the Canteen Owner (Admin)
+POST http://localhost:4000/api/auth/register
+Content-Type: application/json
+
+{
+  "username": "canteen_owner",
+  "password": "securepassword123",
+  "role": "admin"
+}
+
+### 2. Login to get the JWT Token
+POST http://localhost:4000/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "canteen_owner",
+  "password": "securepassword123"
+}
+
+### 3. Try to access Dashboard WITHOUT a token (Should fail with 401 Unauthorized)
+GET http://localhost:4000/api/dashboard
+
+
+### 4. Access Dashboard WITH the token (Replace YOUR_TOKEN_HERE with the login token)
+GET http://localhost:4000/api/dashboard
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJjYW50ZWVuX293bmVyIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzkzMDE2Mzg3LCJleHAiOjE3OTMxMDI3ODd9.3uT36t5uB_G4VjCDXE0rYwNqjF4D7AG5P9IwxHx-lak
+
+### 5. Register a Customer (User Role)
+POST http://localhost:4000/api/auth/register
+Content-Type: application/json
+
+{
+  "username": "customer_budi",
+  "password": "password123",
+  "role": "user"
+}
+
+### 6. Login as the Customer to get the Token
+POST http://localhost:4000/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "customer_budi",
+  "password": "password123"
+}
+
+### 7. Try to access the Dashboard as a Customer (Should fail with 403 Forbidden)
+GET http://localhost:4000/api/dashboard
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwidXNlcm5hbWUiOiJjdXN0b21lcl9idWRpIiwicm9sZSI6InVzZXIiLCJpYXQiOjE3OTMwMjEyNTMsImV4cCI6MTc5MzEwNzY1M30.Rxv0F8asPglc6eCzt3PxD8XlXHUcBYMkcxfXKZl38Vg

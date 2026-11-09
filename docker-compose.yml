@@ -1,0 +1,87 @@
+version: '3.8'
+
+services:
+
+#postgreSQL authentication
+  auth-db:
+    image: postgres:15-alpine
+    container_name: auth_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: wilhalplchld
+      POSTGRES_DB: auth_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./database-data/postgres:/var/lib/postgresql/data
+    networks:
+      - kantinA_net
+
+# noSQL transactions
+  main-db:
+    image: mongo:6
+    container_name: main_mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: halwilplchld
+      MONGO_INITDB_DATABASE: kantin_db
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./database-data/mongo:/data/db
+    networks:
+      - kantinA_net
+
+# 3. Auth Microservice
+  auth-service:
+    build: ./auth-service
+    container_name: auth_microservice
+    restart: always
+    environment:
+      PORT: 4000
+      DB_USER: admin
+      DB_PASSWORD: wilhalplchld
+      DB_HOST: auth-db
+      DB_PORT: 5432
+      DB_NAME: auth_db
+      JWT_SECRET: JWTkeyProd
+    depends_on:
+      - auth-db
+    networks:
+      - kantinA_net
+
+  # 4. Main Canteen Microservice
+  main-service:
+    build: ./main-service
+    container_name: main_microservice
+    restart: always
+    environment:
+      PORT: 4001
+      MONGO_URI: mongodb://admin:halwilplchld@main-db:27017/canteen_db?authSource=admin
+    depends_on:
+      - main-db
+    networks:
+      - kantinA_net
+
+  # 5. Gateway / Frontend Microservice
+  gateway:
+    build: ./gateway
+    container_name: gateway_microservice
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      PORT: 8080
+      AUTH_SERVICE_HOST: http://auth-service:4000
+      MAIN_SERVICE_HOST: http://main-service:4001
+    depends_on:
+      - auth-service
+      - main-service
+    networks:
+      - kantinA_net
+
+networks:
+  kantinA_net:
+    driver: bridge

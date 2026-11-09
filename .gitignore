@@ -1,0 +1,7 @@
+node_modules/
+dist/
+.env
+database-data/
+npm-debug.log
+.vscode/
+kantin-seblak-project.zip
