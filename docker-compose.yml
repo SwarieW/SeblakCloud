@@ -1,16 +1,17 @@
 version: '3.8'
 
 services:
-
-#postgreSQL authentication
+  # 1. PostgreSQL Authentication Database
   auth-db:
     image: postgres:15-alpine
     container_name: auth_postgres
     restart: always
+    env_file:
+      - .env
     environment:
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: wilhalplchld
-      POSTGRES_DB: auth_db
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
     ports:
       - "5432:5432"
     volumes:
@@ -18,15 +19,17 @@ services:
     networks:
       - kantinA_net
 
-# noSQL transactions
+  # 2. MongoDB Transactions Database
   main-db:
     image: mongo:6
     container_name: main_mongo
     restart: always
+    env_file:
+      - .env
     environment:
-      MONGO_INITDB_ROOT_USERNAME: admin
-      MONGO_INITDB_ROOT_PASSWORD: halwilplchld
-      MONGO_INITDB_DATABASE: kantin_db
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
+      MONGO_INITDB_DATABASE: canteen_db
     ports:
       - "27017:27017"
     volumes:
@@ -34,19 +37,15 @@ services:
     networks:
       - kantinA_net
 
-# 3. Auth Microservice
+  # 3. Auth Microservice
   auth-service:
     build: ./auth-service
     container_name: auth_microservice
     restart: always
     environment:
       PORT: 4000
-      DB_USER: admin
-      DB_PASSWORD: wilhalplchld
-      DB_HOST: auth-db
-      DB_PORT: 5432
-      DB_NAME: auth_db
-      JWT_SECRET: JWTkeyProd
+    env_file:
+      - .env
     depends_on:
       - auth-db
     networks:
@@ -59,7 +58,8 @@ services:
     restart: always
     environment:
       PORT: 4001
-      MONGO_URI: mongodb://admin:halwilplchld@main-db:27017/canteen_db?authSource=admin
+    env_file:
+      - .env
     depends_on:
       - main-db
     networks:
@@ -74,8 +74,8 @@ services:
       - "8080:8080"
     environment:
       PORT: 8080
-      AUTH_SERVICE_HOST: http://auth-service:4000
-      MAIN_SERVICE_HOST: http://main-service:4001
+    env_file:
+      - .env
     depends_on:
       - auth-service
       - main-service

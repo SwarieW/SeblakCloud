@@ -12,9 +12,20 @@ const PORT = process.env.PORT || 4000;
 
 app.use(cors());
 app.use(express.json());
+app.use('/', authRoutes);
 
-// Mount the authentication routes
-app.use('/api/auth', authRoutes);
+// FIXED: Listen on the exact full path for the dashboard
+app.get(
+  '/api/auth/dashboard',
+  authenticateJWT,
+  authorizeRole(['admin']),
+  (req: AuthRequest, res: Response) => {
+    res.status(200).json({
+      message: `Welcome to the Canteen Dashboard, ${req.user?.username}!`,
+      system_status: 'All microservices running smoothly.'
+    });
+  }
+);
 
 // Global Error Handler
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
@@ -27,14 +38,4 @@ app.listen(PORT, async () => {
   await initializeDB();
 });
 
-app.get(
-  '/api/dashboard',
-  authenticateJWT,
-  authorizeRole(['admin']),
-  (req: AuthRequest, res: Response) => {
-    res.status(200).json({
-      message: `Welcome to the Canteen Dashboard, ${req.user?.username}!`,
-      system_status: 'All microservices running smoothly.'
-    });
-  }
-);
+app.get('/api/auth/health', (req, res) => res.status(200).json({ service: 'Auth Database', status: 'UP', port: 4000 }));

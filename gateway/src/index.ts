@@ -30,3 +30,5 @@ app.use('/api/canteen', proxy(MAIN_SERVICE_HOST, {
 app.listen(PORT, () => {
   console.log(`🌐 Gateway & UI Service listening on http://localhost:${PORT}`);
 });
+
+app.get('/api/health', (req, res) => res.status(200).json({ service: 'Gateway', status: 'UP', port: 8080 }));

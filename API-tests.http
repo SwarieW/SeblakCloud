@@ -1,0 +1,136 @@
+### ========================================
+### AUTHENTICATION MICROSERVICE ROUTES
+### ========================================
+
+### 1. Register the Canteen Owner (Admin)
+POST http://localhost:8080/api/auth/register
+Content-Type: application/json
+
+{
+  "username": "Seblak RafiLinux",
+  "password": "Rafi6767!",
+  "role": "admin"
+}
+
+### 2. Login to get the JWT Token
+POST http://localhost:8080/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "Seblak RafiLinux",
+  "password": "Rafi6767!"
+}
+
+### 3. Try to access Dashboard WITHOUT a token (Should fail with 401 Unauthorized)
+GET http://localhost:8080/api/auth/dashboard
+
+
+### 4. Access Dashboard WITH the token (Replace token after Bearer)
+GET http://localhost:8080/api/auth/dashboard 
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzcsInVzZXJuYW1lIjoiU2VibGFrIFJhZmlMaW51eCIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc5NDM1NzkwOSwiZXhwIjoxNzk0NDQ0MzA5fQ.CIq8Mw_dlj-F9QINN547QyNc2KEQVSDLx_12QIzqLf8
+
+### 5. Register a Customer (User Role)
+POST http://localhost:8080/api/auth/register
+Content-Type: application/json
+
+{
+  "username": "Tegai",
+  "password": "telkom6767",
+  "role": "user"
+}
+
+### 6. Login as the Customer to get the Token
+POST http://localhost:8080/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "Tegay",
+  "password": "telkom6767"
+}
+
+### 7. Try to access the Dashboard as a Customer (Should fail with 403 Forbidden)
+GET http://localhost:8080/api/auth/dashboard
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzgsInVzZXJuYW1lIjoiVGVnYXkiLCJyb2xlIjoidXNlciIsImlhdCI6MTc5NDM1Nzk2NCwiZXhwIjoxNzk0NDQ0MzY0fQ.b-WrcvrYJhuxoyN3Bin2B4RrnHadWpRqxsTXySDoyKE
+
+### ========================================
+### CANTEEN MAIN MICROSERVICE ROUTES
+### ========================================
+
+### 8. Add Seblak Mi (Admin Route)
+POST http://localhost:8080/api/canteen/menu
+Content-Type: application/json
+
+{
+  "name": "Seblak Mi",
+  "price": 18000,
+  "category": "Food"
+}
+
+### 9. Add Seblak Telor (Admin Route)
+POST http://localhost:8080/api/canteen/menu
+Content-Type: application/json
+
+{
+  "name": "Seblak Telor",
+  "price": 4000,
+  "category": "Food"
+}
+
+### 10. Add Kornet (Admin Route)
+POST http://localhost:8080/api/canteen/menu
+Content-Type: application/json
+
+{
+  "name": "Kornet",
+  "price": 1000,
+  "category": "Food"
+}
+
+### 11. Add Air Oasis (Admin Route)
+POST http://localhost:8080/api/canteen/menu
+Content-Type: application/json
+
+{
+  "name": "Air Oasis",
+  "price": 3000,
+  "category": "Beverage"
+}
+
+### 12. Add Magic Water (Admin Route)
+POST http://localhost:8080/api/canteen/menu
+Content-Type: application/json
+
+{
+  "name": "Magic Water",
+  "price": 5000,
+  "category": "Beverage"
+}
+
+### 13. Fetch Full Canteen Menu (Customer/Kiosk)
+GET http://localhost:8080/api/canteen/menu
+
+### 14. Place a Customer Order (Customer/Kiosk)
+POST http://localhost:8080/api/canteen/orders
+Content-Type: application/json
+
+{
+  "customerName": "Tegar",
+  "items": [
+    {
+      "menuItemId": "650000000000000000000001",
+      "name": "Seblak Komplit Super Pedas",
+      "price": 18000,
+      "quantity": 1
+    },
+    {
+      "menuItemId": "650000000000000000000002",
+      "name": "Es Teh Manis Jumbo",
+      "price": 5000,
+      "quantity": 2
+    }
+  ],
+  "totalAmount": 28000
+}
+
+### 15. View Cook Dashboard FIFO Queue (Ordered Oldest-First)
+GET http://localhost:8080/api/canteen/orders/fifo

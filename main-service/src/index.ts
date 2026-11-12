@@ -13,7 +13,7 @@ app.use(cors());
 app.use(express.json());
 
 // Mount Canteen Routes
-app.use('/api/canteen', canteenRoutes);
+app.use('/', canteenRoutes);
 
 const startServer = async () => {
   try {
@@ -31,5 +31,7 @@ const startServer = async () => {
     process.exit(1);
   }
 };
+
+app.get('/api/canteen/health', (req, res) => res.status(200).json({ service: 'Canteen Core', status: 'UP', port: 4001 }));
 
 startServer();
